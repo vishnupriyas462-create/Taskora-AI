@@ -298,7 +298,8 @@ const STORAGE_KEYS = {
   DISCREPANCIES: 'taskora_discrepancies_v1',
   CURRENT_USER_ROLE: 'taskora_user_role_v1',
   CURRENT_USER_NAME: 'taskora_user_name_v1',
-  AUTH_USER: 'taskora_auth_user_v1'
+  AUTH_USER: 'taskora_auth_user_v1',
+  REGISTERED_USERS: 'taskora_registered_users_v1'
 };
 
 export interface UserPreset {
@@ -364,6 +365,46 @@ export const DEFAULT_USERS: UserPreset[] = [
     badgeColor: '#6B7280'
   }
 ];
+
+export const getRoleBadgeColor = (role: UserRole): string => {
+  switch (role) {
+    case 'Admin': return '#8B5CF6';
+    case 'Stage Supervisor': return '#06B6D4';
+    case 'Operator': return '#F59E0B';
+    case 'QC Inspector': return '#10B981';
+    case 'Viewer': return '#6B7280';
+    default: return '#8B5CF6';
+  }
+};
+
+export const getStoredRegisteredUsers = (): UserPreset[] => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+};
+
+export const getAllUsers = (): UserPreset[] => {
+  const registered = getStoredRegisteredUsers();
+  const registeredUsernames = new Set(registered.map(u => u.username.toLowerCase()));
+  const filteredDefaults = DEFAULT_USERS.filter(u => !registeredUsernames.has(u.username.toLowerCase()));
+  return [...filteredDefaults, ...registered];
+};
+
+export const saveNewUser = (user: UserPreset) => {
+  const current = getStoredRegisteredUsers();
+  const existingIdx = current.findIndex(u => u.username.toLowerCase() === user.username.toLowerCase());
+  let updated: UserPreset[];
+  if (existingIdx >= 0) {
+    updated = [...current];
+    updated[existingIdx] = user;
+  } else {
+    updated = [user, ...current];
+  }
+  localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(updated));
+};
 
 export const getStoredAuthUser = (): AuthUser | null => {
   try {
