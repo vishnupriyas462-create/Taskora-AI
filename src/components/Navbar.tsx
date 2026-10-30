@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserRole } from '../types';
+import { UserRole, AuthUser } from '../types';
 import { TaskoraLogo } from './TaskoraLogo';
 import { 
   Scissors, 
@@ -10,12 +10,15 @@ import {
   FileText, 
   Package, 
   Download,
-  BellRing
+  BellRing,
+  LogOut,
+  User
 } from 'lucide-react';
 
 interface NavbarProps {
   currentRole: UserRole;
-  onRoleChange: (role: UserRole) => void;
+  currentUser: AuthUser | null;
+  onLogout: () => void;
   onResetData: () => void;
   alertCount: number;
   discrepancyCount?: number;
@@ -24,11 +27,10 @@ interface NavbarProps {
   onTabChange: (tab: 'tracker' | 'dashboard' | 'master' | 'reports') => void;
 }
 
-const ROLES: UserRole[] = ['Admin', 'Stage Supervisor', 'Operator', 'QC Inspector', 'Viewer'];
-
 export const Navbar: React.FC<NavbarProps> = ({
   currentRole,
-  onRoleChange,
+  currentUser,
+  onLogout,
   onResetData,
   alertCount,
   discrepancyCount = 0,
@@ -173,21 +175,53 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* Dark Glass Role Switcher */}
-            <div className="flex items-center bg-white/[0.04] border border-white/10 rounded-full px-2.5 py-1 text-xs shadow-xs">
-              <Shield className="w-3 h-3 text-[#06B6D4] mr-1.5" />
-              <select
-                aria-label="Active User Role"
-                value={currentRole}
-                onChange={(e) => onRoleChange(e.target.value as UserRole)}
-                className="bg-transparent text-neutral-300 text-xs font-mono tracking-tight focus:outline-none cursor-pointer pr-1"
+            {/* Authenticated User Profile Badge & Logout */}
+            <div className="flex items-center space-x-2">
+              <div 
+                className="flex items-center bg-white/[0.04] border border-white/10 rounded-full px-2.5 py-1 text-xs shadow-xs"
+                title={`${currentUser?.name || 'Authenticated User'} (${currentUser?.employeeId || currentRole})`}
               >
-                {ROLES.map((role) => (
-                  <option key={role} value={role} className="bg-[#0a0a0a] text-neutral-200">
-                    {role}
-                  </option>
-                ))}
-              </select>
+                <div 
+                  className={`w-2 h-2 rounded-full mr-2 shrink-0 ${
+                    currentRole === 'Admin' 
+                      ? 'bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.8)]' 
+                      : currentRole === 'Stage Supervisor'
+                      ? 'bg-[#06B6D4] shadow-[0_0_8px_rgba(6,182,212,0.8)]'
+                      : currentRole === 'Operator'
+                      ? 'bg-[#F59E0B] shadow-[0_0_8px_rgba(245,158,11,0.8)]'
+                      : currentRole === 'QC Inspector'
+                      ? 'bg-[#10B981] shadow-[0_0_8px_rgba(16,185,129,0.8)]'
+                      : 'bg-neutral-400'
+                  }`} 
+                />
+                <span className="hidden sm:inline text-white font-medium text-xs mr-2 max-w-[110px] truncate">
+                  {currentUser?.name || currentRole}
+                </span>
+                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
+                  currentRole === 'Admin'
+                    ? 'bg-[#8B5CF6]/15 text-[#8B5CF6] border border-[#8B5CF6]/30'
+                    : currentRole === 'Stage Supervisor'
+                    ? 'bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30'
+                    : currentRole === 'Operator'
+                    ? 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30'
+                    : currentRole === 'QC Inspector'
+                    ? 'bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30'
+                    : 'bg-neutral-500/15 text-neutral-400 border border-neutral-500/30'
+                }`}>
+                  {currentRole === 'Stage Supervisor' ? 'SUPERVISOR' : currentRole.toUpperCase()}
+                </span>
+              </div>
+
+              {/* Logout Button */}
+              <button
+                type="button"
+                onClick={onLogout}
+                className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-full bg-white/[0.03] hover:bg-[#F43F5E]/15 border border-white/10 hover:border-[#F43F5E]/40 text-neutral-400 hover:text-[#F43F5E] transition-all duration-200 cursor-pointer"
+                title="Log out of Terminal session"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden md:inline text-[11px] font-mono tracking-tight font-semibold">Exit</span>
+              </button>
             </div>
 
             {/* Reset button (Desktop) */}

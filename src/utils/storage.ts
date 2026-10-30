@@ -1,4 +1,4 @@
-import { Product, ProductionBatch, StageRecord, ProductionStage, DiscrepancyReport } from '../types';
+import { Product, ProductionBatch, StageRecord, ProductionStage, DiscrepancyReport, AuthUser, UserRole } from '../types';
 
 export const STAGES_LIST: ProductionStage[] = ['Cutting', 'Stitching', 'QC', 'Finishing', 'Packing'];
 
@@ -297,7 +297,93 @@ const STORAGE_KEYS = {
   STAGE_RECORDS: 'taskora_stage_records_v1',
   DISCREPANCIES: 'taskora_discrepancies_v1',
   CURRENT_USER_ROLE: 'taskora_user_role_v1',
-  CURRENT_USER_NAME: 'taskora_user_name_v1'
+  CURRENT_USER_NAME: 'taskora_user_name_v1',
+  AUTH_USER: 'taskora_auth_user_v1'
+};
+
+export interface UserPreset {
+  username: string;
+  name: string;
+  role: UserRole;
+  employeeId: string;
+  department: string;
+  password?: string;
+  description: string;
+  badgeColor: string;
+}
+
+export const DEFAULT_USERS: UserPreset[] = [
+  {
+    username: 'admin',
+    name: 'Elena Rostova',
+    role: 'Admin',
+    employeeId: 'ADM-101',
+    department: 'Plant Operations & Governance',
+    password: 'admin',
+    description: 'Full facility access, master batch configuration & incident resolution.',
+    badgeColor: '#8B5CF6'
+  },
+  {
+    username: 'supervisor',
+    name: 'Marcus Brody',
+    role: 'Stage Supervisor',
+    employeeId: 'SUP-204',
+    department: 'Floor Production Lines 1-4',
+    password: 'supervisor',
+    description: 'Stage transitions, throughput oversight & discrepancy dispatch.',
+    badgeColor: '#06B6D4'
+  },
+  {
+    username: 'operator',
+    name: 'Amina Khatun',
+    role: 'Operator',
+    employeeId: 'OPR-382',
+    department: 'Cutting & Sewing Line A',
+    password: 'operator',
+    description: 'Piece counts logging, intake verification & mandatory missing remarks.',
+    badgeColor: '#F59E0B'
+  },
+  {
+    username: 'qc_inspector',
+    name: 'David Vance',
+    role: 'QC Inspector',
+    employeeId: 'QC-419',
+    department: 'Quality Assurance & Defect Audit',
+    password: 'qc',
+    description: 'Inspection tollgate, rework classification & scrap auditing.',
+    badgeColor: '#10B981'
+  },
+  {
+    username: 'viewer',
+    name: 'Auditor Guest',
+    role: 'Viewer',
+    employeeId: 'AUD-901',
+    department: 'External Compliance / Client Audit',
+    password: 'viewer',
+    description: 'Read-only batch inspection, yield efficiency metrics & CSV exports.',
+    badgeColor: '#6B7280'
+  }
+];
+
+export const getStoredAuthUser = (): AuthUser | null => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
+};
+
+export const saveAuthUser = (user: AuthUser | null) => {
+  if (user) {
+    localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER_ROLE, user.role);
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER_NAME, user.name);
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER_ROLE);
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER_NAME);
+  }
 };
 
 export const getStoredDiscrepancies = (): DiscrepancyReport[] => {

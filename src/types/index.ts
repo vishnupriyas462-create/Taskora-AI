@@ -4,6 +4,15 @@ export type BatchStatus = 'Active' | 'Completed' | 'On Hold';
 
 export type UserRole = 'Admin' | 'Stage Supervisor' | 'Operator' | 'QC Inspector' | 'Viewer';
 
+export interface AuthUser {
+  username: string;
+  name: string;
+  role: UserRole;
+  employeeId: string;
+  department?: string;
+  lastLogin?: string;
+}
+
 export interface Product {
   product_code: string;
   product_name: string;

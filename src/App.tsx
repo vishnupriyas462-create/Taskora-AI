@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Product, ProductionBatch, StageRecord, UserRole, DiscrepancyReport } from './types';
+import { Product, ProductionBatch, StageRecord, UserRole, DiscrepancyReport, AuthUser } from './types';
 import { 
   getStoredProducts, 
   saveProducts, 
@@ -9,7 +9,9 @@ import {
   saveStageRecords, 
   getStoredDiscrepancies,
   saveDiscrepancies,
-  resetStorageToDefaults 
+  resetStorageToDefaults,
+  getStoredAuthUser,
+  saveAuthUser
 } from './utils/storage';
 import { getNextStage, getBatchSummaryMetrics } from './utils/rules';
 import { Navbar } from './components/Navbar';
@@ -20,17 +22,25 @@ import { ModuleReports } from './components/ModuleReports';
 import { ModuleMasterData } from './components/ModuleMasterData';
 import { AlertsDrawer } from './components/AlertsDrawer';
 import { TaskoraLogo } from './components/TaskoraLogo';
+import { LoginPage } from './components/LoginPage';
 
 export function App() {
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(getStoredAuthUser);
   const [products, setProducts] = useState<Product[]>(getStoredProducts);
   const [batches, setBatches] = useState<ProductionBatch[]>(getStoredBatches);
   const [records, setRecords] = useState<StageRecord[]>(getStoredStageRecords);
   const [discrepancies, setDiscrepancies] = useState<DiscrepancyReport[]>(getStoredDiscrepancies);
   const [selectedBatchNo, setSelectedBatchNo] = useState<string>(() => batches[0]?.batch_no || 'BATCH-2026-001');
-  const [currentRole, setCurrentRole] = useState<UserRole>('Admin');
   const [activeTab, setActiveTab] = useState<'tracker' | 'dashboard' | 'master' | 'reports'>('tracker');
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'alert' } | null>(null);
+
+  const currentRole: UserRole = currentUser ? currentUser.role : 'Admin';
+
+  // Sync auth state to LocalStorage
+  useEffect(() => {
+    saveAuthUser(currentUser);
+  }, [currentUser]);
 
   // Sync state to LocalStorage
   useEffect(() => {
@@ -188,6 +198,32 @@ export function App() {
     { label: "FACTORY AUDIT", value: "IMMUTABLE LEDGER", color: "text-[#06B6D4]" },
   ];
 
+  if (!currentUser) {
+    return (
+      <>
+        {notification && (
+          <div className="fixed top-6 right-6 z-50 animate-fadeIn">
+            <div className="px-4 py-3 rounded-2xl glass-panel text-white shadow-2xl text-xs sm:text-sm font-semibold flex items-center space-x-2.5 border border-white/20">
+              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
+              <span>{notification.message}</span>
+            </div>
+          </div>
+        )}
+        <LoginPage
+          onLogin={(user) => {
+            setCurrentUser(user);
+            saveAuthUser(user);
+            setNotification({
+              message: `Welcome, ${user.name}! Terminal authenticated as ${user.role}.`,
+              type: 'success'
+            });
+            setTimeout(() => setNotification(null), 4500);
+          }}
+        />
+      </>
+    );
+  }
+
   return (
     <div className="relative min-h-screen bg-[#030303] text-[#F3F4F6] selection:bg-[#8B5CF6]/30 selection:text-white flex flex-col font-sans overflow-x-hidden">
       
@@ -202,7 +238,16 @@ export function App() {
       {/* SYNAPSE FLOATING GLASS TOP NAVIGATION */}
       <Navbar
         currentRole={currentRole}
-        onRoleChange={setCurrentRole}
+        currentUser={currentUser}
+        onLogout={() => {
+          setCurrentUser(null);
+          saveAuthUser(null);
+          setNotification({
+            message: 'Terminal session logged out successfully.',
+            type: 'alert'
+          });
+          setTimeout(() => setNotification(null), 3000);
+        }}
         onResetData={handleResetData}
         alertCount={totalAlertsCount}
         discrepancyCount={openDiscrepanciesCount}
@@ -272,6 +317,7 @@ export function App() {
             onSaveRecord={handleSaveStageRecord}
             onSendDiscrepancyReport={handleSendDiscrepancyReport}
             currentRole={currentRole}
+            currentUserName={currentUser.name}
           />
         )}
 

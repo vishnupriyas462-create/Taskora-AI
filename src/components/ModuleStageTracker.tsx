@@ -36,6 +36,7 @@ interface ModuleStageTrackerProps {
   ) => void;
   onSendDiscrepancyReport: (report: Omit<DiscrepancyReport, 'id' | 'reported_at'>) => void;
   currentRole: UserRole;
+  currentUserName?: string;
 }
 
 const STAGE_ICONS: Record<ProductionStage, React.ReactNode> = {
@@ -51,7 +52,8 @@ export const ModuleStageTracker: React.FC<ModuleStageTrackerProps> = ({
   records,
   onSaveRecord,
   onSendDiscrepancyReport,
-  currentRole
+  currentRole,
+  currentUserName
 }) => {
   const activeBatchRecords = records.filter((r) => r.batch_no === batch.batch_no);
   
@@ -78,7 +80,13 @@ export const ModuleStageTracker: React.FC<ModuleStageTrackerProps> = ({
   const prevStageInfo = getPreviousStageInfo(batch, selectedStage, records);
 
   // Form State
-  const [operatorName, setOperatorName] = useState('David Vance (Senior QC)');
+  const [operatorName, setOperatorName] = useState(currentUserName || 'David Vance (Senior QC)');
+
+  useEffect(() => {
+    if (currentUserName) {
+      setOperatorName(currentUserName);
+    }
+  }, [currentUserName]);
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [timeIn, setTimeIn] = useState('08:30');
   const [qtyPassed, setQtyPassed] = useState<number | ''>('');
