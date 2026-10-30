@@ -23,6 +23,7 @@ import { ModuleMasterData } from './components/ModuleMasterData';
 import { AlertsDrawer } from './components/AlertsDrawer';
 import { TaskoraLogo } from './components/TaskoraLogo';
 import { LoginPage } from './components/LoginPage';
+import { CreateAccountModal } from './components/CreateAccountModal';
 
 export function App() {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(getStoredAuthUser);
@@ -33,6 +34,7 @@ export function App() {
   const [selectedBatchNo, setSelectedBatchNo] = useState<string>(() => batches[0]?.batch_no || 'BATCH-2026-001');
   const [activeTab, setActiveTab] = useState<'tracker' | 'dashboard' | 'master' | 'reports'>('tracker');
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
+  const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'alert' } | null>(null);
 
   const currentRole: UserRole = currentUser ? currentUser.role : 'Admin';
@@ -248,6 +250,16 @@ export function App() {
           });
           setTimeout(() => setNotification(null), 3000);
         }}
+        onSwitchUser={(user) => {
+          setCurrentUser(user);
+          saveAuthUser(user);
+          setNotification({
+            message: `Switched session to ${user.name} (${user.role})`,
+            type: 'success'
+          });
+          setTimeout(() => setNotification(null), 3000);
+        }}
+        onOpenCreateAccount={() => setIsCreateAccountOpen(true)}
         onResetData={handleResetData}
         alertCount={totalAlertsCount}
         discrepancyCount={openDiscrepanciesCount}
@@ -369,6 +381,21 @@ export function App() {
         onSelectBatch={(bNo) => {
           setSelectedBatchNo(bNo);
           setActiveTab('dashboard');
+        }}
+      />
+
+      {/* Create Account Modal */}
+      <CreateAccountModal
+        isOpen={isCreateAccountOpen}
+        onClose={() => setIsCreateAccountOpen(false)}
+        onAccountCreated={(user) => {
+          setCurrentUser(user);
+          saveAuthUser(user);
+          setNotification({
+            message: `Account created for ${user.name}! Authenticated as ${user.role}.`,
+            type: 'success'
+          });
+          setTimeout(() => setNotification(null), 4000);
         }}
       />
 

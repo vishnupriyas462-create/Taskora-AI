@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { UserRole, AuthUser } from '../types';
 import { TaskoraLogo } from './TaskoraLogo';
+import { DEFAULT_USERS, getAllUsers, getRoleBadgeColor, UserPreset } from '../utils/storage';
 import { 
   Scissors, 
   AlertTriangle, 
@@ -12,13 +13,18 @@ import {
   Download,
   BellRing,
   LogOut,
-  User
+  User,
+  UserPlus,
+  ChevronDown,
+  CheckCircle2
 } from 'lucide-react';
 
 interface NavbarProps {
   currentRole: UserRole;
   currentUser: AuthUser | null;
   onLogout: () => void;
+  onSwitchUser?: (user: AuthUser) => void;
+  onOpenCreateAccount?: () => void;
   onResetData: () => void;
   alertCount: number;
   discrepancyCount?: number;
@@ -31,6 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentRole,
   currentUser,
   onLogout,
+  onSwitchUser,
+  onOpenCreateAccount,
   onResetData,
   alertCount,
   discrepancyCount = 0,
@@ -40,6 +48,20 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const allUsers = getAllUsers();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsAccountMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
@@ -175,11 +197,27 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* Authenticated User Profile Badge & Logout */}
-            <div className="flex items-center space-x-2">
-              <div 
-                className="flex items-center bg-white/[0.04] border border-white/10 rounded-full px-2.5 py-1 text-xs shadow-xs"
-                title={`${currentUser?.name || 'Authenticated User'} (${currentUser?.employeeId || currentRole})`}
+            {/* Authenticated User Profile Menu & Create Account */}
+            <div className="relative flex items-center space-x-2" ref={menuRef}>
+              {/* "+ Create Account" Quick Action */}
+              {onOpenCreateAccount && (
+                <button
+                  type="button"
+                  onClick={onOpenCreateAccount}
+                  className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-neutral-300 hover:text-white transition-all text-xs font-mono cursor-pointer"
+                  title="Register new operator / supervisor account"
+                >
+                  <UserPlus className="w-3.5 h-3.5 text-[#10B981]" />
+                  <span>Create Account</span>
+                </button>
+              )}
+
+              {/* Profile Pill Trigger */}
+              <button
+                type="button"
+                onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                className="flex items-center bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-full px-2.5 py-1 text-xs shadow-xs transition-colors cursor-pointer"
+                title="Account menu: Switch role or view default entries"
               >
                 <div 
                   className={`w-2 h-2 rounded-full mr-2 shrink-0 ${
@@ -210,7 +248,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}>
                   {currentRole === 'Stage Supervisor' ? 'SUPERVISOR' : currentRole.toUpperCase()}
                 </span>
-              </div>
+                <ChevronDown className="w-3 h-3 text-neutral-400 ml-1.5" />
+              </button>
 
               {/* Logout Button */}
               <button
@@ -222,6 +261,92 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <LogOut className="w-3.5 h-3.5" />
                 <span className="hidden md:inline text-[11px] font-mono tracking-tight font-semibold">Exit</span>
               </button>
+
+              {/* Account Dropdown Menu */}
+              {isAccountMenuOpen && (
+                <div className="absolute right-0 top-12 z-50 w-72 rounded-2xl glass-panel border border-white/15 bg-[#0a0a0c]/95 backdrop-blur-2xl p-3 shadow-2xl animate-fadeIn">
+                  <div className="pb-2.5 mb-2.5 border-b border-white/10">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">
+                      Active Session
+                    </div>
+                    <div className="text-sm font-bold text-white mt-0.5 truncate">
+                      {currentUser?.name || currentRole}
+                    </div>
+                    <div className="text-[11px] font-mono text-neutral-400 flex items-center justify-between mt-0.5">
+                      <span>{currentUser?.employeeId || 'ID: Default'}</span>
+                      <span className="text-[#06B6D4]">{currentRole}</span>
+                    </div>
+                  </div>
+
+                  {/* Switch to Default Entries */}
+                  <div className="space-y-1 mb-2.5">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-semibold px-2 pb-1">
+                      Default Entries (Quick Switch)
+                    </div>
+                    {DEFAULT_USERS.map((preset) => {
+                      const isCurrent = currentUser?.username === preset.username;
+                      return (
+                        <button
+                          key={preset.username}
+                          type="button"
+                          onClick={() => {
+                            if (onSwitchUser) {
+                              onSwitchUser({
+                                username: preset.username,
+                                name: preset.name,
+                                role: preset.role,
+                                employeeId: preset.employeeId,
+                                department: preset.department,
+                                lastLogin: new Date().toISOString()
+                              });
+                            }
+                            setIsAccountMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                            isCurrent ? 'bg-white/15 text-white font-bold' : 'hover:bg-white/5 text-neutral-300'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: preset.badgeColor }} />
+                            <span className="text-xs truncate">{preset.name}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-neutral-400">
+                            {preset.role === 'Stage Supervisor' ? 'Supervisor' : preset.role}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Actions inside dropdown */}
+                  <div className="pt-2 border-t border-white/10 space-y-1">
+                    {onOpenCreateAccount && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsAccountMenuOpen(false);
+                          onOpenCreateAccount();
+                        }}
+                        className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-[#10B981]/15 text-[#10B981] text-xs font-mono font-semibold transition-colors cursor-pointer"
+                      >
+                        <UserPlus className="w-3.5 h-3.5" />
+                        <span>+ Create New Account</span>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAccountMenuOpen(false);
+                        onLogout();
+                      }}
+                      className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-[#F43F5E]/15 text-[#F43F5E] text-xs font-mono font-semibold transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Log Out to Login Screen</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Reset button (Desktop) */}

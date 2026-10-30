@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Product, ProductionBatch, StageRecord, UserRole } from '../types';
-import { STAGES_LIST } from '../utils/storage';
+import { STAGES_LIST, getAllUsers, getRoleBadgeColor } from '../utils/storage';
 import { getBatchSummaryMetrics } from '../utils/rules';
+import { CreateAccountModal } from './CreateAccountModal';
 import { 
   Plus, 
   Layers, 
@@ -11,7 +12,12 @@ import {
   ArrowRight, 
   X, 
   Eye, 
-  Activity 
+  Activity,
+  UserPlus,
+  Shield,
+  User,
+  Building2,
+  BadgeCheck
 } from 'lucide-react';
 
 interface ModuleMasterDataProps {
@@ -37,10 +43,12 @@ export const ModuleMasterData: React.FC<ModuleMasterDataProps> = ({
   onAddBatch,
   currentRole
 }) => {
-  const [activeTab, setActiveTab] = useState<'batches' | 'products'>('batches');
+  const [activeTab, setActiveTab] = useState<'batches' | 'products' | 'accounts'>('batches');
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [activeDetailBatch, setActiveDetailBatch] = useState<ProductionBatch | null>(null);
+  const [userList, setUserList] = useState(() => getAllUsers());
 
   // New Batch Form State
   const [batchNo, setBatchNo] = useState(() => `BATCH-2026-00${batches.length + 1}`);
@@ -136,7 +144,18 @@ export const ModuleMasterData: React.FC<ModuleMasterDataProps> = ({
                 activeTab === 'products' ? 'bg-white text-black font-bold shadow-xs' : 'text-neutral-400 hover:text-white'
               }`}
             >
-              Product Master ({products.length})
+              Products ({products.length})
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('accounts');
+                setUserList(getAllUsers());
+              }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all transition-snappy cursor-pointer ${
+                activeTab === 'accounts' ? 'bg-white text-black font-bold shadow-xs' : 'text-neutral-400 hover:text-white'
+              }`}
+            >
+              Accounts ({userList.length})
             </button>
           </div>
 
@@ -149,13 +168,21 @@ export const ModuleMasterData: React.FC<ModuleMasterDataProps> = ({
                 <Plus className="w-4 h-4" />
                 <span>Create Batch</span>
               </button>
-            ) : (
+            ) : activeTab === 'products' ? (
               <button
                 onClick={() => setIsProductModalOpen(true)}
                 className="flex items-center gap-1.5 px-4 py-2 bg-white text-black rounded-full text-xs font-semibold shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:bg-neutral-200 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Garment</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsAccountModalOpen(true)}
+                className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#10B981] to-[#06B6D4] text-black rounded-full text-xs font-bold shadow-md hover:opacity-95 transition-all cursor-pointer"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Create Account</span>
               </button>
             )
           )}
@@ -363,6 +390,79 @@ export const ModuleMasterData: React.FC<ModuleMasterDataProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ACCOUNTS TAB */}
+      {activeTab === 'accounts' && (
+        <div className="space-y-4">
+          <div className="rounded-2xl glass-panel border border-white/10 p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
+            <div className="flex items-center gap-2 text-neutral-400">
+              <Shield className="w-4 h-4 text-[#10B981]" />
+              <span>
+                Default system entries and registered workstation accounts configured for this facility.
+              </span>
+            </div>
+            <button
+              onClick={() => setIsAccountModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] font-bold text-xs hover:bg-[#10B981]/25 transition-colors cursor-pointer"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>+ Create New Account</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {userList.map((u) => {
+              const isDefault = ['admin', 'supervisor', 'operator', 'qc_inspector', 'viewer'].includes(u.username);
+              const badgeColor = u.badgeColor || getRoleBadgeColor(u.role);
+              return (
+                <div
+                  key={u.username}
+                  className="rounded-3xl glass-panel border border-white/10 p-6 shadow-lg hover:border-white/20 transition-all space-y-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <span 
+                      className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-lg border"
+                      style={{
+                        backgroundColor: `${badgeColor}20`,
+                        color: badgeColor,
+                        borderColor: `${badgeColor}40`
+                      }}
+                    >
+                      {u.role}
+                    </span>
+                    <span className="text-[10px] font-mono text-neutral-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
+                      {isDefault ? 'Default System Entry' : 'Custom Account'}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 className="font-serif-instrument text-2xl text-white">
+                      {u.name}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-1 text-xs font-mono text-neutral-400">
+                      <span>Handle: <strong className="text-white">@{u.username}</strong></span>
+                      <span>&bull;</span>
+                      <span>ID: <strong className="text-[#06B6D4]">{u.employeeId}</strong></span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs font-mono text-neutral-400 leading-relaxed bg-black/40 p-3 rounded-xl border border-white/5">
+                    {u.description || 'Registered production line operator workstation account.'}
+                  </p>
+
+                  <div className="pt-2 border-t border-white/10 text-xs font-mono flex items-center justify-between text-neutral-400">
+                    <span className="truncate">{u.department}</span>
+                    <span className="text-[#10B981] flex items-center gap-1 shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      Active
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -795,6 +895,15 @@ export const ModuleMasterData: React.FC<ModuleMasterDataProps> = ({
           </div>
         </div>
       )}
+
+      {/* CREATE ACCOUNT MODAL */}
+      <CreateAccountModal
+        isOpen={isAccountModalOpen}
+        onClose={() => setIsAccountModalOpen(false)}
+        onAccountCreated={() => {
+          setUserList(getAllUsers());
+        }}
+      />
     </div>
   );
 };

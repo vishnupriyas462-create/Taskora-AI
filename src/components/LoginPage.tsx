@@ -83,6 +83,23 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setSuccessMessage('');
   };
 
+  // Quick instant login for default entries
+  const handleInstantLogin = (preset: UserPreset) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const authUser: AuthUser = {
+        username: preset.username,
+        name: preset.name,
+        role: preset.role,
+        employeeId: preset.employeeId,
+        department: preset.department,
+        lastLogin: new Date().toISOString()
+      };
+      setIsLoading(false);
+      onLogin(authUser);
+    }, 350);
+  };
+
   // Sign In Submission
   const handleSignInSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -283,23 +300,32 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <div>
               {/* Quick Role Preset Cards (Keeps default entries & custom accounts) */}
               <div className="mb-7">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 font-semibold flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#06B6D4]" />
-                    Default Entries & Quick Profiles
-                  </label>
-                  <span className="text-[10px] font-mono text-neutral-500">
-                    Click to quick-fill
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <div>
+                    <label className="text-[11px] font-mono uppercase tracking-wider text-neutral-300 font-semibold flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#06B6D4]" />
+                      Default Entries & Quick Access Profiles
+                    </label>
+                    <p className="text-[10px] font-mono text-neutral-500 mt-0.5">
+                      Click any default entry to auto-fill or use "Login &rarr;" for instant access
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveMode('signup')}
+                    className="self-start sm:self-auto flex items-center gap-1.5 text-[11px] font-mono font-bold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 hover:bg-[#10B981]/20 px-3 py-1.5 rounded-xl transition-all cursor-pointer shadow-sm"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>+ Create Account</span>
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                   {allUsersList.map((preset) => {
                     const isSelected = selectedRole === preset.role && username === preset.username;
                     return (
-                      <button
+                      <div
                         key={`${preset.role}-${preset.username}`}
-                        type="button"
                         onClick={() => handleSelectPreset(preset)}
                         className={`relative p-2.5 rounded-2xl text-left transition-all duration-200 border cursor-pointer flex flex-col justify-between ${
                           isSelected
@@ -324,10 +350,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                             {preset.name.split(' ')[0]}
                           </div>
                         </div>
-                        <div className="text-[9px] font-mono text-neutral-500 mt-2">
-                          {preset.employeeId}
+
+                        <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between">
+                          <span className="text-[9px] font-mono text-neutral-500">
+                            {preset.employeeId}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleInstantLogin(preset);
+                            }}
+                            className="text-[9px] font-mono font-bold text-white bg-white/10 hover:bg-white/25 px-2 py-0.5 rounded-full border border-white/15 transition-all cursor-pointer"
+                            title={`Instant login as ${preset.name} (${preset.role})`}
+                          >
+                            Login &rarr;
+                          </button>
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
