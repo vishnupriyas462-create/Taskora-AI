@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor="#1e1035" />
+      <stop offset="70%" stopColor="#08080c" />
+      <stop offset="100%" stopColor="#030303" />
+    </radialGradient>
+    <linearGradient id="t-grad-1" x1="50" y1="50" x2="450" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#8B5CF6" />
+      <stop offset="50%" stopColor="#06B6D4" />
+      <stop offset="100%" stopColor="#10B981" />
+    </linearGradient>
+    <linearGradient id="t-grad-2" x1="450" y1="50" x2="50" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#06B6D4" />
+      <stop offset="100%" stopColor="#8B5CF6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark Rounded App Squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-glow)"/>
+  <rect width="510" height="510" x="1" y="1" rx="127" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="2"/>
+
+  <!-- Subtle Outer Hexagon Geometry -->
+  <polygon points="256,64 430,164 430,364 256,464 82,364 82,164" fill="rgba(255, 255, 255, 0.02)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="4"/>
+
+  <!-- Taskora AI 'T' Emblem -->
+  <!-- Top Crossbar -->
+  <path d="M120 180 C120 162 134 148 152 148 H360 C378 148 392 162 392 180 C392 198 378 212 360 212 H152 C134 212 120 198 120 180 Z" fill="url(#t-grad-1)" filter="url(#glow)"/>
+
+  <!-- Vertical Tapered Needle Stem -->
+  <path d="M224 212 H288 V344 L256 388 L224 344 V212 Z" fill="url(#t-grad-2)"/>
+
+  <!-- Fabric Weave / Fiber Stitches -->
+  <line x1="180" y1="180" x2="332" y2="180" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="14 14" opacity="0.9"/>
+  <line x1="256" y1="226" x2="256" y2="330" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="14 14" opacity="0.9"/>
+
+  <!-- Neural Nodes -->
+  <circle cx="152" cy="180" r="14" fill="#FFFFFF"/>
+  <circle cx="360" cy="180" r="14" fill="#22D3EE"/>
+  <circle cx="256" cy="256" r="18" fill="#FFFFFF" filter="url(#glow)"/>
+  <circle cx="256" cy="388" r="12" fill="#10B981"/>
+</svg>
