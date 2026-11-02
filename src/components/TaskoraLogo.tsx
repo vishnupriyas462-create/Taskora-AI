@@ -87,7 +87,7 @@ export const TaskoraLogo: React.FC<TaskoraLogoProps> = ({
               AI
             </span>
           </div>
-          <span className="hidden sm:inline-block font-mono text-[9px] uppercase tracking-widest text-[#06B6D4] bg-[#06B6D4]/10 border border-[#06B6D4]/20 px-2 py-0.5 rounded-full">
+          <span className="hidden 2xl:inline-block font-mono text-[9px] uppercase tracking-widest text-[#06B6D4] bg-[#06B6D4]/10 border border-[#06B6D4]/20 px-2 py-0.5 rounded-full whitespace-nowrap">
             Garment Neural OS
           </span>
         </div>

@@ -97,60 +97,64 @@ export const Navbar: React.FC<NavbarProps> = ({
     <>
       {/* TASKORA AI FLOATING GLASS NAVIGATION PILL */}
       <header className="sticky top-4 z-40 px-3 sm:px-6 w-full pt-[env(safe-area-inset-top,0px)]">
-        <div className="max-w-6xl mx-auto rounded-full px-4 sm:px-6 py-2.5 glass-panel shadow-[0_8px_32px_rgba(0,0,0,0.7)] flex items-center justify-between border border-white/10 transition-all transition-snappy">
+        <div className="max-w-7xl mx-auto rounded-full px-3.5 sm:px-5 py-2 glass-panel shadow-[0_8px_32px_rgba(0,0,0,0.7)] flex items-center justify-between border border-white/10 transition-all transition-snappy gap-2 sm:gap-4">
           
           {/* Left: Taskora AI Brand Logo & Name */}
           <div 
             onClick={() => onTabChange('tracker')}
-            className="flex items-center space-x-2.5 sm:space-x-3 shrink-0 cursor-pointer group"
+            className="flex items-center space-x-2 shrink-0 cursor-pointer group"
             title="Taskora AI — Garment Production Neural OS"
           >
             <TaskoraLogo size={32} />
             {isInstalled && (
-              <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 rounded-md">
+              <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 rounded-md shrink-0">
                 APP
               </span>
             )}
           </div>
 
-          {/* Center: Desktop Nav Tabs (12px uppercase Inter, neutral-400) */}
-          <nav className="hidden lg:flex items-center space-x-1 font-inter">
+          {/* Center: Desktop Nav Tabs (11px uppercase Inter, neutral-400) */}
+          <nav className="hidden lg:flex items-center p-1 rounded-full bg-white/[0.03] border border-white/5 space-x-1 shrink-0 font-inter">
             <button
+              type="button"
               onClick={() => onTabChange('tracker')}
-              className={`px-3.5 py-1.5 text-[12px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer ${
+              className={`h-8 px-3.5 flex items-center justify-center text-[11px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer whitespace-nowrap leading-none select-none ${
                 activeTab === 'tracker'
-                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)]'
-                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
+                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)] font-bold'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               Stage Tracker
             </button>
             <button
+              type="button"
               onClick={() => onTabChange('dashboard')}
-              className={`px-3.5 py-1.5 text-[12px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer ${
+              className={`h-8 px-3.5 flex items-center justify-center text-[11px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer whitespace-nowrap leading-none select-none ${
                 activeTab === 'dashboard'
-                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)]'
-                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
+                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)] font-bold'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               Live Dashboard
             </button>
             <button
+              type="button"
               onClick={() => onTabChange('reports')}
-              className={`px-3.5 py-1.5 text-[12px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer ${
+              className={`h-8 px-3.5 flex items-center justify-center text-[11px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer whitespace-nowrap leading-none select-none ${
                 activeTab === 'reports'
-                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)]'
-                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
+                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)] font-bold'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               Reports & Audit
             </button>
             <button
+              type="button"
               onClick={() => onTabChange('master')}
-              className={`px-3.5 py-1.5 text-[12px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer ${
+              className={`h-8 px-3.5 flex items-center justify-center text-[11px] font-semibold uppercase tracking-wider rounded-full transition-all transition-snappy cursor-pointer whitespace-nowrap leading-none select-none ${
                 activeTab === 'master'
-                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)]'
-                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
+                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)] font-bold'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.06]'
               }`}
             >
               Products & Batches
@@ -158,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right: Actions, Alerts & Role Selector */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {/* Always Visible Download / Install App Button */}
             <button
               type="button"
@@ -169,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setIsInstallModalOpen(true);
                 }
               }}
-              className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#8B5CF6]/20 hover:bg-[#8B5CF6]/30 border border-[#8B5CF6]/40 text-[#8B5CF6] hover:text-white text-xs font-mono font-semibold transition-all shadow-[0_0_12px_rgba(139,92,246,0.3)] active:scale-95 cursor-pointer shrink-0"
+              className="h-8 px-2.5 sm:px-3 flex items-center space-x-1 sm:space-x-1.5 rounded-full bg-[#8B5CF6]/20 hover:bg-[#8B5CF6]/30 border border-[#8B5CF6]/40 text-[#8B5CF6] hover:text-white text-xs font-mono font-semibold transition-all shadow-[0_0_12px_rgba(139,92,246,0.3)] active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
               title="Download & Install Taskora AI App"
             >
               <Download className="w-3.5 h-3.5" />
@@ -182,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={onOpenAlerts}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-full bg-[#F43F5E]/15 border border-[#F43F5E]/30 text-[#F43F5E] text-xs font-mono font-bold shadow-[0_0_15px_rgba(244,63,94,0.3)] hover:bg-[#F43F5E]/25 transition-colors cursor-pointer shrink-0"
+                className="h-8 px-2 sm:px-2.5 flex items-center space-x-1 sm:space-x-1.5 rounded-full bg-[#F43F5E]/15 border border-[#F43F5E]/30 text-[#F43F5E] text-xs font-mono font-bold shadow-[0_0_15px_rgba(244,63,94,0.3)] hover:bg-[#F43F5E]/25 transition-colors cursor-pointer shrink-0 whitespace-nowrap"
                 title="Open Discrepancy Reports"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#F43F5E] animate-ping" />
@@ -194,7 +198,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* General Alerts Bell */}
             <button
               onClick={onOpenAlerts}
-              className="relative p-1.5 sm:p-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer shrink-0"
+              className="h-8 w-8 flex items-center justify-center relative rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer shrink-0"
               title="View Alerts & Audit Warnings"
             >
               <AlertTriangle className={`w-3.5 h-3.5 ${alertCount > 0 ? 'text-[#F59E0B]' : 'text-neutral-400'}`} />
@@ -207,24 +211,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Authenticated User Profile Menu & Create Account */}
             <div className="relative flex items-center space-x-1.5 sm:space-x-2 shrink-0" ref={menuRef}>
-              {/* "+ Create Account" Quick Action */}
-              {onOpenCreateAccount && (
-                <button
-                  type="button"
-                  onClick={onOpenCreateAccount}
-                  className="hidden xl:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-neutral-300 hover:text-white transition-all text-xs font-mono cursor-pointer shrink-0"
-                  title="Register new operator / supervisor account"
-                >
-                  <UserPlus className="w-3.5 h-3.5 text-[#10B981]" />
-                  <span>Create Account</span>
-                </button>
-              )}
-
               {/* Profile Pill Trigger */}
               <button
                 type="button"
                 onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
-                className="flex items-center bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-full px-2 sm:px-2.5 py-1 text-xs shadow-xs transition-colors cursor-pointer shrink-0"
+                className="h-8 flex items-center bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-full px-2 sm:px-2.5 text-xs shadow-xs transition-colors cursor-pointer shrink-0 whitespace-nowrap"
                 title="Account menu: Switch role or view default entries"
               >
                 <div 
@@ -263,7 +254,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={onLogout}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-full bg-white/[0.03] hover:bg-[#F43F5E]/15 border border-white/10 hover:border-[#F43F5E]/40 text-neutral-400 hover:text-[#F43F5E] transition-all duration-200 cursor-pointer shrink-0"
+                className="h-8 flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 rounded-full bg-white/[0.03] hover:bg-[#F43F5E]/15 border border-white/10 hover:border-[#F43F5E]/40 text-neutral-400 hover:text-[#F43F5E] transition-all duration-200 cursor-pointer shrink-0 whitespace-nowrap"
                 title="Log out of Terminal session"
               >
                 <LogOut className="w-3.5 h-3.5" />
