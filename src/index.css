@@ -144,8 +144,14 @@
   z-index: 1;
   background: #0a0a0a;
   border-radius: 9999px;
-  padding: 16px 40px;
+  padding: 12px 20px;
   transition: background 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (min-width: 640px) {
+  .shiny-border-btn-inner {
+    padding: 16px 36px;
+  }
 }
 
 .shiny-border-btn:hover .shiny-border-btn-inner {

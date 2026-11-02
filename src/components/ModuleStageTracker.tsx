@@ -385,59 +385,61 @@ export const ModuleStageTracker: React.FC<ModuleStageTrackerProps> = ({
       {/* Main Content Area */}
       {isStageCompleted && existingRecord ? (
         /* READ-ONLY IMMUTABLE AUDIT LOG */
-        <div className="glass-panel border border-[#10B981]/30 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
-          <div className="absolute top-0 right-0 p-5">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-mono font-semibold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-              <ShieldCheck className="w-4 h-4" />
-              Locked Audit Record (Immutable)
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3.5 mb-8">
-            <div className="p-3 bg-[#10B981]/15 border border-[#10B981]/30 rounded-2xl text-[#10B981]">
-              {STAGE_ICONS[selectedStage]}
+        <div className="glass-panel border border-[#10B981]/30 rounded-3xl p-5 sm:p-8 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+            <div className="flex items-center gap-3.5">
+              <div className="p-3 bg-[#10B981]/15 border border-[#10B981]/30 rounded-2xl text-[#10B981] shrink-0">
+                {STAGE_ICONS[selectedStage]}
+              </div>
+              <div>
+                <h3 className="font-serif-instrument text-2xl sm:text-3xl font-normal text-white">
+                  {selectedStage} Stage Completed Record
+                </h3>
+                <p className="text-xs font-mono text-neutral-400 mt-0.5">
+                  Logged on {new Date(existingRecord.submitted_at).toLocaleString()} by{' '}
+                  <span className="text-[#06B6D4] font-semibold">{existingRecord.operator_name}</span>
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-serif-instrument text-2xl sm:text-3xl font-normal text-white">
-                {selectedStage} Stage Completed Record
-              </h3>
-              <p className="text-xs font-mono text-neutral-400 mt-0.5">
-                Logged on {new Date(existingRecord.submitted_at).toLocaleString()} by{' '}
-                <span className="text-[#06B6D4] font-semibold">{existingRecord.operator_name}</span>
-              </p>
+
+            <div className="shrink-0 self-start sm:self-auto">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                <ShieldCheck className="w-4 h-4 shrink-0" />
+                <span>Locked Audit Record</span>
+              </span>
             </div>
           </div>
 
           {/* Metric cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white/[0.02] p-4 rounded-2xl border border-white/10">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+            <div className="bg-white/[0.02] p-3.5 sm:p-4 rounded-2xl border border-white/10">
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-400 block mb-1">Pieces Received</span>
-              <span className="text-3xl font-mono font-bold text-white">{existingRecord.qty_received}</span>
-              <span className="text-[10px] font-mono text-neutral-500 block mt-1">From previous stage</span>
+              <span className="text-2xl sm:text-3xl font-mono font-bold text-white block truncate">{existingRecord.qty_received}</span>
+              <span className="text-[10px] font-mono text-neutral-500 block mt-1 truncate">From previous stage</span>
             </div>
 
-            <div className="bg-[#10B981]/10 p-4 rounded-2xl border border-[#10B981]/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+            <div className="bg-[#10B981]/10 p-3.5 sm:p-4 rounded-2xl border border-[#10B981]/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#10B981] block mb-1">Pieces Passed (OUT)</span>
-              <span className="text-3xl font-mono font-bold text-[#10B981]">{existingRecord.qty_passed}</span>
-              <span className="text-[10px] font-mono text-[#10B981]/80 block mt-1">Advanced to next stage</span>
+              <span className="text-2xl sm:text-3xl font-mono font-bold text-[#10B981] block truncate">{existingRecord.qty_passed}</span>
+              <span className="text-[10px] font-mono text-[#10B981]/80 block mt-1 truncate">Advanced to next stage</span>
             </div>
 
-            <div className="bg-[#F59E0B]/10 p-4 rounded-2xl border border-[#F59E0B]/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+            <div className="bg-[#F59E0B]/10 p-3.5 sm:p-4 rounded-2xl border border-[#F59E0B]/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#F59E0B] block mb-1">Defective / Scrap</span>
-              <span className="text-3xl font-mono font-bold text-[#F59E0B]">{existingRecord.qty_rejected}</span>
-              <span className="text-[10px] font-mono text-[#F59E0B]/80 block mt-1">Failed inspection</span>
+              <span className="text-2xl sm:text-3xl font-mono font-bold text-[#F59E0B] block truncate">{existingRecord.qty_rejected}</span>
+              <span className="text-[10px] font-mono text-[#F59E0B]/80 block mt-1 truncate">Failed inspection</span>
             </div>
 
-            <div className="bg-[#F43F5E]/10 p-4 rounded-2xl border border-[#F43F5E]/30 shadow-[0_0_20px_rgba(244,63,94,0.15)]">
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#F43F5E] block mb-1">
+            <div className="bg-[#F43F5E]/10 p-3.5 sm:p-4 rounded-2xl border border-[#F43F5E]/30 shadow-[0_0_20px_rgba(244,63,94,0.15)]">
+              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#F43F5E] block mb-1 truncate">
                 {existingRecord.qty_surplus ? 'Surplus / Excess' : 'Missing / Shortage'}
               </span>
-              <span className={`text-3xl font-mono font-bold ${
+              <span className={`text-2xl sm:text-3xl font-mono font-bold block truncate ${
                 existingRecord.qty_surplus ? 'text-[#06B6D4]' : existingRecord.qty_missing > 0 ? 'text-[#F43F5E]' : 'text-neutral-500'
               }`}>
                 {existingRecord.qty_surplus ? `+${existingRecord.qty_surplus}` : existingRecord.qty_missing}
               </span>
-              <span className="text-[10px] font-mono text-neutral-400 block mt-1">
+              <span className="text-[10px] font-mono text-neutral-400 block mt-1 truncate">
                 {existingRecord.qty_surplus ? 'Surplus recorded' : existingRecord.qty_missing === 0 ? 'Zero pieces lost' : 'Unaccounted'}
               </span>
             </div>
@@ -485,14 +487,14 @@ export const ModuleStageTracker: React.FC<ModuleStageTrackerProps> = ({
         </div>
       ) : (
         /* INTERACTIVE STAGE ENTRY FORM */
-        <form onSubmit={handleSubmit} className="glass-panel border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+        <form onSubmit={handleSubmit} className="glass-panel border border-white/10 rounded-3xl p-5 sm:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 mb-6 border-b border-white/10 gap-3">
             <div className="flex items-center gap-3.5">
-              <div className="p-3 bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[#8B5CF6] rounded-2xl shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+              <div className="p-3 bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[#8B5CF6] rounded-2xl shadow-[0_0_15px_rgba(139,92,246,0.2)] shrink-0">
                 {STAGE_ICONS[selectedStage]}
               </div>
               <div>
-                <h3 className="font-serif-instrument text-2xl sm:text-3xl text-white flex items-center gap-2">
+                <h3 className="font-serif-instrument text-2xl sm:text-3xl text-white flex flex-wrap items-center gap-2">
                   <span>Record {selectedStage} Production Stage</span>
                   <span className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-[#06B6D4]/15 text-[#06B6D4] font-semibold border border-[#06B6D4]/30">
                     Active Telemetry
@@ -505,7 +507,7 @@ export const ModuleStageTracker: React.FC<ModuleStageTrackerProps> = ({
             </div>
 
             {/* Read-Only Auto-Fed Received Banner */}
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-2.5 flex items-center gap-3">
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-2.5 flex items-center justify-between sm:justify-start gap-3 shrink-0">
               <div>
                 <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-neutral-400 block">
                   {selectedStage === 'Cutting' ? 'Pieces Planned (Master)' : `Auto-Received from ${prevStageInfo.stage}`}
@@ -517,47 +519,47 @@ export const ModuleStageTracker: React.FC<ModuleStageTrackerProps> = ({
                   Logged by: {prevStageInfo.operator}
                 </span>
               </div>
-              <Info className="w-4 h-4 text-neutral-500" />
+              <Info className="w-4 h-4 text-neutral-500 shrink-0" />
             </div>
           </div>
 
           {/* LIVE METRIC BAR */}
-          <div className="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white/[0.02] p-3 rounded-2xl border border-white/5">
+          <div className="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 bg-white/[0.02] p-2.5 sm:p-3 rounded-2xl border border-white/5">
             <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10">
-              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-neutral-400 block mb-1">
+              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-neutral-400 block mb-1 truncate">
                 Qty Received
               </span>
-              <span className="text-2xl font-mono font-bold text-white">{autoReceived}</span>
+              <span className="text-2xl font-mono font-bold text-white block truncate">{autoReceived}</span>
               <span className="text-[10px] font-mono text-neutral-500 block truncate mt-0.5">From {prevStageInfo.operator}</span>
             </div>
 
             <div className="p-3 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#10B981] block mb-1">
+              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#10B981] block mb-1 truncate">
                 Qty Passed (OK)
               </span>
-              <span className="text-2xl font-mono font-bold text-[#10B981]">{numPassed || 0}</span>
-              <span className="text-[10px] font-mono text-[#10B981]/80 block mt-0.5">Completed OK</span>
+              <span className="text-2xl font-mono font-bold text-[#10B981] block truncate">{numPassed || 0}</span>
+              <span className="text-[10px] font-mono text-[#10B981]/80 block truncate mt-0.5">Completed OK</span>
             </div>
 
             <div className="p-3 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#F59E0B] block mb-1">
+              <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#F59E0B] block mb-1 truncate">
                 Qty Defective
               </span>
-              <span className="text-2xl font-mono font-bold text-[#F59E0B]">{numRejected || 0}</span>
-              <span className="text-[10px] font-mono text-[#F59E0B]/80 block mt-0.5">Failed / scrap</span>
+              <span className="text-2xl font-mono font-bold text-[#F59E0B] block truncate">{numRejected || 0}</span>
+              <span className="text-[10px] font-mono text-[#F59E0B]/80 block truncate mt-0.5">Failed / scrap</span>
             </div>
 
             {/* DYNAMIC 4TH BOX: SHOWS SURPLUS (EXCESS) OR MISSING (SHORTAGE) */}
             {liveSurplus > 0 ? (
               <div className="p-3 rounded-xl bg-[#06B6D4]/15 border border-[#06B6D4]/35 text-[#06B6D4] shadow-[0_0_15px_rgba(6,182,212,0.2)]">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#06B6D4] block font-bold">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-[#06B6D4] block font-bold truncate">
                     Qty Surplus
                   </span>
-                  <AlertTriangle className="w-3.5 h-3.5 text-[#06B6D4]" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-[#06B6D4] shrink-0" />
                 </div>
-                <span className="text-2xl font-mono font-bold text-white">+{liveSurplus} pcs</span>
-                <span className="text-[10px] font-mono text-[#06B6D4] block mt-0.5">Exceeds received!</span>
+                <span className="text-2xl font-mono font-bold text-white block truncate">+{liveSurplus} pcs</span>
+                <span className="text-[10px] font-mono text-[#06B6D4] block truncate mt-0.5">Exceeds received!</span>
               </div>
             ) : (
               <div className={`p-3 rounded-xl border transition-all ${
@@ -913,16 +915,16 @@ export const ModuleStageTracker: React.FC<ModuleStageTrackerProps> = ({
           )}
 
           {/* SYNAPSE SHINY BORDER ACTION BUTTON */}
-          <div className="flex items-center justify-end pt-4">
+          <div className="flex items-center justify-end pt-4 w-full">
             <button
               type="submit"
               disabled={isSaveBlockedByRole}
-              className={`shiny-border-btn ${isSaveBlockedByRole ? 'opacity-40 cursor-not-allowed' : ''}`}
+              className={`shiny-border-btn w-full sm:w-auto ${isSaveBlockedByRole ? 'opacity-40 cursor-not-allowed' : ''}`}
             >
-              <div className="shiny-border-btn-inner flex items-center space-x-2 text-white font-semibold text-sm">
-                <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-                <span>Complete & Lock {selectedStage} Stage</span>
-                <ArrowRight className="w-4 h-4 text-[#06B6D4]" />
+              <div className="shiny-border-btn-inner flex items-center justify-center space-x-2 text-white font-semibold text-xs sm:text-sm w-full">
+                <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" />
+                <span className="truncate">Complete & Lock {selectedStage} Stage</span>
+                <ArrowRight className="w-4 h-4 text-[#06B6D4] shrink-0" />
               </div>
             </button>
           </div>

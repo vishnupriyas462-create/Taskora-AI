@@ -33,12 +33,12 @@ export const BatchSelector: React.FC<BatchSelectorProps> = ({
               <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-400 block mb-0.5">
                 Active Order Pipeline
               </span>
-              <div className="flex flex-wrap items-center gap-2 mt-0.5">
+              <div className="flex flex-wrap items-center gap-2 mt-1 w-full">
                 <select
                   aria-label="Select Active Batch"
                   value={selectedBatchNo}
                   onChange={(e) => onSelectBatch(e.target.value)}
-                  className="bg-[#0a0a0a] text-white font-mono font-semibold text-xs sm:text-sm rounded-xl border border-white/15 px-3 py-1.5 focus:border-[#8B5CF6] focus:outline-none cursor-pointer transition-colors shadow-xs"
+                  className="w-full sm:w-auto max-w-full sm:max-w-md truncate bg-[#0a0a0a] text-white font-mono font-semibold text-xs sm:text-sm rounded-xl border border-white/15 px-3 py-1.5 focus:border-[#8B5CF6] focus:outline-none cursor-pointer transition-colors shadow-xs"
                 >
                   {batches.map((b) => (
                     <option key={b.batch_no} value={b.batch_no} className="bg-[#080808] text-white">

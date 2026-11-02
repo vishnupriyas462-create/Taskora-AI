@@ -264,24 +264,24 @@ export const ModuleReports: React.FC<ModuleReportsProps> = ({
 
       {/* Search / Filter bar for missing and rejection reports */}
       {(activeReport === 'missing' || activeReport === 'rejections') && (
-        <div className="bg-white border border-stone-200 p-3.5 rounded-xl shadow-xs flex flex-wrap items-center gap-3">
+        <div className="glass-panel border border-white/10 p-3.5 rounded-2xl shadow-xs flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-stone-400" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by defect keyword or explanation..."
-              className="w-full pl-9 pr-3 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-900 focus:outline-none focus:border-indigo-600 focus:bg-white"
+              className="w-full pl-9 pr-3 py-1.5 bg-[#0a0a0a] border border-white/15 rounded-xl text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-[#8B5CF6]"
             />
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-stone-500">Filter Stage:</span>
+          <div className="flex items-center gap-2 text-xs font-mono">
+            <span className="text-neutral-400">Filter Stage:</span>
             <select
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value)}
-              className="bg-stone-50 text-stone-800 border border-stone-200 rounded-lg px-2.5 py-1.5 focus:outline-none cursor-pointer"
+              className="bg-[#0a0a0a] text-white border border-white/15 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-[#8B5CF6] cursor-pointer"
             >
               <option value="ALL">All Stages</option>
               {STAGES_LIST.map((s) => (

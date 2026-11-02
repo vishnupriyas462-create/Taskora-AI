@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { UserRole, AuthUser } from '../types';
 import { DEFAULT_USERS, UserPreset, getAllUsers, saveNewUser, getRoleBadgeColor } from '../utils/storage';
 import { TaskoraLogo } from './TaskoraLogo';
+import { InstallAppModal } from './InstallAppModal';
 import { 
   Shield, 
   User, 
@@ -17,7 +18,8 @@ import {
   LogIn,
   Building2,
   BadgeCheck,
-  Check
+  Check,
+  Download
 } from 'lucide-react';
 
 interface LoginPageProps {
@@ -39,6 +41,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [rememberTerminal, setRememberTerminal] = useState(true);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
 
   // Sign Up / Create Account Form State
   const [regFullName, setRegFullName] = useState('');
@@ -217,14 +230,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
       {/* LOGIN CARD CONTAINER */}
       <div className="relative z-10 w-full max-w-2xl">
-        {/* Top Floating Badge */}
-        <div className="flex justify-center mb-5">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-lg">
+        {/* Top Floating Badge & Download Option */}
+        <div className="flex items-center justify-between gap-3 mb-5">
+          <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-lg">
             <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
-            <span className="text-[11px] font-mono tracking-widest uppercase text-neutral-300">
+            <span className="text-[10px] sm:text-[11px] font-mono tracking-widest uppercase text-neutral-300">
               Terminal Node 01 &bull; Zero-Loss Pipeline
             </span>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setIsInstallModalOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#8B5CF6]/20 hover:bg-[#8B5CF6]/30 border border-[#8B5CF6]/40 text-[#8B5CF6] hover:text-white text-xs font-mono font-semibold transition-all shadow-[0_0_12px_rgba(139,92,246,0.3)] active:scale-95 cursor-pointer shrink-0"
+            title="Download & Install Taskora AI on this device"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Download App</span>
+          </button>
         </div>
 
         {/* Main Glassmorphic Card */}
@@ -752,6 +775,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
         </div>
       </div>
+
+      {/* Download / Install App Modal */}
+      <InstallAppModal
+        isOpen={isInstallModalOpen}
+        onClose={() => setIsInstallModalOpen(false)}
+        deferredPrompt={deferredPrompt}
+      />
     </div>
   );
 };

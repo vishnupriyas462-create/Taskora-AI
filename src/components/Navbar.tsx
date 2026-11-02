@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UserRole, AuthUser } from '../types';
 import { TaskoraLogo } from './TaskoraLogo';
 import { DEFAULT_USERS, getAllUsers, getRoleBadgeColor, UserPreset } from '../utils/storage';
+import { InstallAppModal } from './InstallAppModal';
 import { 
   Scissors, 
   AlertTriangle, 
@@ -16,7 +17,8 @@ import {
   User,
   UserPlus,
   ChevronDown,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -49,6 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const allUsers = getAllUsers();
@@ -155,38 +158,43 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right: Actions, Alerts & Role Selector */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Install PWA Prompt */}
-            {deferredPrompt && (
-              <button
-                type="button"
-                onClick={handleInstallClick}
-                className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 text-[#8B5CF6] text-xs font-semibold hover:bg-[#8B5CF6]/25 transition-colors cursor-pointer"
-                title="Install Taskora AI App"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Install</span>
-              </button>
-            )}
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
+            {/* Always Visible Download / Install App Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (deferredPrompt) {
+                  handleInstallClick();
+                } else {
+                  setIsInstallModalOpen(true);
+                }
+              }}
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#8B5CF6]/20 hover:bg-[#8B5CF6]/30 border border-[#8B5CF6]/40 text-[#8B5CF6] hover:text-white text-xs font-mono font-semibold transition-all shadow-[0_0_12px_rgba(139,92,246,0.3)] active:scale-95 cursor-pointer shrink-0"
+              title="Download & Install Taskora AI App"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Download</span>
+              <span className="sm:hidden text-[11px]">App</span>
+            </button>
 
             {/* Discrepancy Alert Pill */}
             {discrepancyCount > 0 && (
               <button
                 type="button"
                 onClick={onOpenAlerts}
-                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#F43F5E]/15 border border-[#F43F5E]/30 text-[#F43F5E] text-xs font-mono font-bold shadow-[0_0_15px_rgba(244,63,94,0.3)] hover:bg-[#F43F5E]/25 transition-colors cursor-pointer"
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-full bg-[#F43F5E]/15 border border-[#F43F5E]/30 text-[#F43F5E] text-xs font-mono font-bold shadow-[0_0_15px_rgba(244,63,94,0.3)] hover:bg-[#F43F5E]/25 transition-colors cursor-pointer shrink-0"
                 title="Open Discrepancy Reports"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-[#F43F5E] animate-ping" />
                 <span>{discrepancyCount}</span>
-                <span className="hidden sm:inline font-sans text-[11px] font-semibold uppercase tracking-wider text-rose-300">Shortage</span>
+                <span className="hidden md:inline font-sans text-[11px] font-semibold uppercase tracking-wider text-rose-300">Shortage</span>
               </button>
             )}
 
             {/* General Alerts Bell */}
             <button
               onClick={onOpenAlerts}
-              className="relative p-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="relative p-1.5 sm:p-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer shrink-0"
               title="View Alerts & Audit Warnings"
             >
               <AlertTriangle className={`w-3.5 h-3.5 ${alertCount > 0 ? 'text-[#F59E0B]' : 'text-neutral-400'}`} />
@@ -198,13 +206,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             {/* Authenticated User Profile Menu & Create Account */}
-            <div className="relative flex items-center space-x-2" ref={menuRef}>
+            <div className="relative flex items-center space-x-1.5 sm:space-x-2 shrink-0" ref={menuRef}>
               {/* "+ Create Account" Quick Action */}
               {onOpenCreateAccount && (
                 <button
                   type="button"
                   onClick={onOpenCreateAccount}
-                  className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-neutral-300 hover:text-white transition-all text-xs font-mono cursor-pointer"
+                  className="hidden xl:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-neutral-300 hover:text-white transition-all text-xs font-mono cursor-pointer shrink-0"
                   title="Register new operator / supervisor account"
                 >
                   <UserPlus className="w-3.5 h-3.5 text-[#10B981]" />
@@ -216,11 +224,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
-                className="flex items-center bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-full px-2.5 py-1 text-xs shadow-xs transition-colors cursor-pointer"
+                className="flex items-center bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-full px-2 sm:px-2.5 py-1 text-xs shadow-xs transition-colors cursor-pointer shrink-0"
                 title="Account menu: Switch role or view default entries"
               >
                 <div 
-                  className={`w-2 h-2 rounded-full mr-2 shrink-0 ${
+                  className={`w-2 h-2 rounded-full mr-1.5 sm:mr-2 shrink-0 ${
                     currentRole === 'Admin' 
                       ? 'bg-[#8B5CF6] shadow-[0_0_8px_rgba(139,92,246,0.8)]' 
                       : currentRole === 'Stage Supervisor'
@@ -232,7 +240,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       : 'bg-neutral-400'
                   }`} 
                 />
-                <span className="hidden sm:inline text-white font-medium text-xs mr-2 max-w-[110px] truncate">
+                <span className="hidden md:inline text-white font-medium text-xs mr-2 max-w-[100px] truncate">
                   {currentUser?.name || currentRole}
                 </span>
                 <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
@@ -246,25 +254,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ? 'bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30'
                     : 'bg-neutral-500/15 text-neutral-400 border border-neutral-500/30'
                 }`}>
-                  {currentRole === 'Stage Supervisor' ? 'SUPERVISOR' : currentRole.toUpperCase()}
+                  {currentRole === 'Stage Supervisor' ? 'SUP' : currentRole.slice(0, 5).toUpperCase()}
                 </span>
-                <ChevronDown className="w-3 h-3 text-neutral-400 ml-1.5" />
+                <ChevronDown className="w-3 h-3 text-neutral-400 ml-1 sm:ml-1.5" />
               </button>
 
               {/* Logout Button */}
               <button
                 type="button"
                 onClick={onLogout}
-                className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-full bg-white/[0.03] hover:bg-[#F43F5E]/15 border border-white/10 hover:border-[#F43F5E]/40 text-neutral-400 hover:text-[#F43F5E] transition-all duration-200 cursor-pointer"
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-full bg-white/[0.03] hover:bg-[#F43F5E]/15 border border-white/10 hover:border-[#F43F5E]/40 text-neutral-400 hover:text-[#F43F5E] transition-all duration-200 cursor-pointer shrink-0"
                 title="Log out of Terminal session"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                <span className="hidden md:inline text-[11px] font-mono tracking-tight font-semibold">Exit</span>
+                <span className="hidden lg:inline text-[11px] font-mono tracking-tight font-semibold">Exit</span>
               </button>
 
               {/* Account Dropdown Menu */}
               {isAccountMenuOpen && (
-                <div className="absolute right-0 top-12 z-50 w-72 rounded-2xl glass-panel border border-white/15 bg-[#0a0a0c]/95 backdrop-blur-2xl p-3 shadow-2xl animate-fadeIn">
+                <div className="absolute right-0 top-12 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-2xl glass-panel border border-white/15 bg-[#0a0a0c]/95 backdrop-blur-2xl p-3 shadow-2xl animate-fadeIn">
                   <div className="pb-2.5 mb-2.5 border-b border-white/10">
                     <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">
                       Active Session
@@ -307,10 +315,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                           }`}
                         >
                           <div className="flex items-center gap-2 truncate">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: preset.badgeColor }} />
+                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: preset.badgeColor }} />
                             <span className="text-xs truncate">{preset.name}</span>
                           </div>
-                          <span className="text-[10px] font-mono text-neutral-400">
+                          <span className="text-[10px] font-mono text-neutral-400 shrink-0">
                             {preset.role === 'Stage Supervisor' ? 'Supervisor' : preset.role}
                           </span>
                         </button>
@@ -320,6 +328,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   {/* Actions inside dropdown */}
                   <div className="pt-2 border-t border-white/10 space-y-1">
+                    {/* Direct Install Option inside dropdown */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAccountMenuOpen(false);
+                        setIsInstallModalOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-[#8B5CF6]/15 text-[#8B5CF6] text-xs font-mono font-semibold transition-colors cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download & Install App</span>
+                    </button>
+
                     {onOpenCreateAccount && (
                       <button
                         type="button"
@@ -333,6 +354,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <span>+ Create New Account</span>
                       </button>
                     )}
+
                     <button
                       type="button"
                       onClick={() => {
@@ -360,6 +382,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
       </header>
+
+      {/* Download / Install App Modal */}
+      <InstallAppModal
+        isOpen={isInstallModalOpen}
+        onClose={() => setIsInstallModalOpen(false)}
+        deferredPrompt={deferredPrompt}
+        onInstallSuccess={() => setIsInstalled(true)}
+      />
 
       {/* SYNAPSE MOBILE FLOATING BOTTOM NAVIGATION PILL */}
       <nav aria-label="Mobile Navigation" className="lg:hidden fixed bottom-4 left-4 right-4 z-40 pb-[env(safe-area-inset-bottom,0px)]">
